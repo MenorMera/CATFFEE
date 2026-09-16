@@ -33,8 +33,8 @@
 
 | Componente | Tecnología Sugerida |
 | :--- | :--- |
-| **Lenguaje (POO)** | Java / C# / Python |
-| **Interfaz Gráfica** | Swing / Windows Forms / Tkinter |
+| **Lenguaje (POO)** | Java |
+| **Interfaz Gráfica** | Swing |
 | **Base de Datos** | Oracle APEX (SQL) |
 | **Control de Versiones** | Git & GitHub |
 
