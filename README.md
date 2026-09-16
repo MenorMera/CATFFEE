@@ -15,7 +15,7 @@
 ---
 
 ## 📖 Acerca del Proyecto
-**Catffee** es una solución de software diseñada para optimizar los procesos operativos de una pequeña cafetería. Permite llevar un control automatizado de inventarios, registro de clientes, gestión de empleados, procesamiento de ventas, compras a proveedores y la logística de envíos a domicilio.
+**Catffee** es una solución de software diseñada para optimizar los procesos operativos de una pequeña cafetería. Permite llevar un control automatizado de inventarios, registro de clientes, gestión de empleados, procesamiento de ventas, compras a proveedores.
 
 ---
 
