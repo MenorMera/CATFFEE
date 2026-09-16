@@ -34,7 +34,7 @@
 | :--- | :--- |
 | **Lenguaje (POO)** | Java |
 | **Interfaz Gráfica** | Swing |
-| **Base de Datos** | Oracle APEX (SQL) |
+| **Base de Datos** | Oracle APEX (SQL), MySQL |
 | **Control de Versiones** | Git & GitHub |
 
 ---
