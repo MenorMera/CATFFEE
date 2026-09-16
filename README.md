@@ -24,7 +24,6 @@
 * 👥 **Gestión de Personal:** Administración de empleados con diferenciación de roles (Operarios y Administradores).
 * 📦 **Control de Inventario:** Catálogo de productos clasificados (*Comestibles, Aseo, Artículos*) con alertas de stock.
 * 🛍️ **Módulos Comerciales:** Registro detallado de transacciones de ventas y compras con cálculo de impuestos y descuentos.
-* 🛵 **Logística de Envíos:** Asignación de transportadores y seguimiento de estados de entrega (*En traslado, Sí, No*).
 * 🗂️ **Base de Datos Relacional:** Estructura robusta de 12 tablas interconectadas para garantizar la integridad de la información.
 
 ---
