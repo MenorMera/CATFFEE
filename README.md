@@ -8,7 +8,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-En%20Desarrollo-orange?style=for-the-badge" alt="Status">
-  <img src="https://img.shields.io/badge/Database-Oracle%20APEX-blue?style=for-the-badge&logo=oracle" alt="Oracle">
+  <img src="https://img.shields.io/badge/Database-My%20SQL-blue?style=for-the-badge&logo=oracle" alt="Oracle">
   <img src="https://img.shields.io/badge/Semestre-Tercero-success?style=for-the-badge" alt="Semestre">
 </p>
 
@@ -34,7 +34,7 @@
 | :--- | :--- |
 | **Lenguaje (POO)** | Java |
 | **Interfaz Gráfica** | Swing |
-| **Base de Datos** | Oracle APEX (SQL), MySQL |
+| **Base de Datos** | MySQL |
 | **Control de Versiones** | Git & GitHub |
 
 ---
