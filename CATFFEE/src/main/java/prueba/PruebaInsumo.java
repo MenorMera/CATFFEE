@@ -1,7 +1,7 @@
 package prueba;
 
 import catffee.modelo.Insumo;
-
+//inicio de clase
 public class PruebaInsumo {
     
     public static void main(String[] args) {
@@ -15,7 +15,7 @@ public class PruebaInsumo {
         System.out.println("Descripción: " + cafe.getDescripcion());
         System.out.println("Stock Actual: " + cafe.getStockActual() + " kg");
         System.out.println("Stock Mínimo: " + cafe.getStockMinimo() + " kg");
-        System.out.println("Precio de Costo: $" + cafe.getPrecioCosto()); // en este caso el cafe se cuenta por Kg y decidi ponerle de precio 45k
+        System.out.println("Precio de Costo: $" + cafe.getPrecioCosto()); // si en este caso el cafe se cuenta por Kg y decidi ponerle de precio 45k
 
         System.out.println("\n--- Probando aumentarStock(3.5 kg) ---");
         boolean aumento = cafe.aumentarStock(3.5);
