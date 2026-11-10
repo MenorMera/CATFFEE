@@ -69,4 +69,4 @@ public class PruebaInsumo {
         
         System.out.println("\n=== FIN DE LAS PRUEBAS ===");
     }
-}
+}//fin de la prueba
