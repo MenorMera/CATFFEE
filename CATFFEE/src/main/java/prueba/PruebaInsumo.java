@@ -32,13 +32,13 @@ public class PruebaInsumo {
         System.out.println("¿Se pudo descontar?: " + descuentoFallido); 
         System.out.println("Stock Actual actual: " + cafe.getStockActual() + " kg");
 
-        System.out.println("\n--- Probando needReponer() ---");
-        System.out.println("¿Necesita reposición actualmente?: " + cafe.needReponer()); 
+        System.out.println("\n--- Probando necesitaReponer() ---");
+        System.out.println("¿Necesita reposición actualmente?: " + cafe.necesitaReposicion()); 
 
         System.out.println("\n--- Descontando más stock para activar la alerta ---");
         cafe.descontarStock(3.0); 
         System.out.println("Stock Actual final: " + cafe.getStockActual() + " kg");
-        System.out.println("¿Necesita reposición ahora?: " + cafe.needReponer()); 
+        System.out.println("¿Necesita reposición ahora?: " + cafe.necesitaReposicion()); 
         
         System.out.println("\n=== FIN DE LAS PRUEBAS ===");
     }
