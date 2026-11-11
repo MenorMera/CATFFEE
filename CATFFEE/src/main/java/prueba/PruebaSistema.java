@@ -1,4 +1,4 @@
-package catffee;
+package prueba;
 
 import catffee.modelo.*;
 
