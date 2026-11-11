@@ -38,6 +38,13 @@ public class Producto {
         return true;
     }
 
+    public double calcularCosto() {
+    double costo = 0;
+    for (Ingrediente ing : ingredientes) costo += ing.calcularCosto();
+    return costo;
+}
+public double calcularUtilidad() { return precioVenta - calcularCosto(); }
+
     public String getNombre() { return nombre; }
     public double getPrecioVenta() { return precioVenta; }
     public ArrayList<Ingrediente> getIngredientes() { return ingredientes; }
