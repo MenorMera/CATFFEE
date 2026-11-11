@@ -43,4 +43,12 @@ public class GestorCache {
         }
         return lista;
     }
+    public static void sobrescribirRegistros(String archivo, List<String> lineas) {
+    try {
+        java.nio.file.Files.write(java.nio.file.Paths.get(archivo), lineas,
+                java.nio.charset.StandardCharsets.UTF_8);
+    } catch (java.io.IOException ex) {
+        ex.printStackTrace();
+    }
+}
 }
