@@ -20,7 +20,7 @@ public class Cliente {
         this.nombre = nombre;
         this.telefono = telefono;
         this.correo = correo;
-                 
+        this.id = id;
     }
     
 public String obtenerInformacion(){
@@ -30,8 +30,9 @@ public String obtenerInformacion(){
 
 public boolean verificarCorreo(String correoIngresado) {
 return this.correo.equals(correoIngresado);
- 
+
 }
+
 
 public boolean confirmarCorreo() {
 if (this.correo == null || this.correo.isEmpty() ){

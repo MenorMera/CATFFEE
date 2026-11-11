@@ -14,6 +14,8 @@ public class Proveedor {
         this.insumosQueOfrece = new ArrayList<>();
     }
 
+    public boolean ofrece(Insumo insumo) { return insumosQueOfrece.contains(insumo); }
+    
     public void agregarAlCatalogo(Insumo insumo) {
         this.insumosQueOfrece.add(insumo);
     }
