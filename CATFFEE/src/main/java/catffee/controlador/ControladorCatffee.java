@@ -1,6 +1,5 @@
 package catffee.controlador;
 
-import catffee.mockups.Login;
 import catffee.vista.*;
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
@@ -9,7 +8,7 @@ import java.util.List;
 
 public class ControladorCatffee {
 
-    private static Login loginInstance;
+    private static VentanaLogin loginInstance;
     private static VentanaPrincipal ventanaPrincipalInstance;
     private static VentanaVenta ventanaVentaInstance;
     private static VentanaProductos ventanaProductosInstance;
@@ -22,7 +21,7 @@ public class ControladorCatffee {
 
     // EL ROL PERMANECE FIJO HASTA CERRAR SESIÓN
     public static String rolActual = "Vendedor";
-    public static String tempTelefono = "";
+    public static String tempCedula = "";
     public static String tempCliente = "";
 
     // --- MÉTODO AUXILIAR ---
@@ -35,14 +34,14 @@ public class ControladorCatffee {
 
     public static void abrirLogin() {
         if (loginInstance == null || !loginInstance.isVisible()) {
-            loginInstance = new Login();
+            loginInstance = new VentanaLogin();
             inicializarLogin(loginInstance);
         }
         loginInstance.setVisible(true);
         loginInstance.toFront();
     }
 
-    public static void inicializarLogin(Login ventana) {
+    public static void inicializarLogin(VentanaLogin ventana) {
         if (ventana.btnIngresar != null && ventana.btnIngresar.getActionListeners().length == 0) {
             ventana.btnIngresar.addActionListener(e -> {
                 String usuario = ventana.txtUsuario != null ? ventana.txtUsuario.getText().trim() : "";
@@ -137,7 +136,7 @@ public class ControladorCatffee {
             ventanaVentaInstance = new VentanaVenta();
             inicializarVentanaVenta(ventanaVentaInstance);
         }
-        ventanaVentaInstance.txtTelefonoCliente.setText(tempTelefono);
+        ventanaVentaInstance.txtCedulaCliente.setText(tempCedula);
         ventanaVentaInstance.lblCliente.setText(tempCliente.isEmpty() ? "PÚBLICO GENERAL (USUARIO NULL)" : tempCliente);
         ventanaVentaInstance.setVisible(true);
         ventanaVentaInstance.toFront();
@@ -147,37 +146,33 @@ public class ControladorCatffee {
     public static void inicializarVentanaVenta(VentanaVenta ventana) {
         if (ventana.btnSinCliente != null && ventana.btnSinCliente.getActionListeners().length == 0) {
             ventana.btnSinCliente.addActionListener(e -> {
-                ventana.txtTelefonoCliente.setText("");
+                ventana.txtCedulaCliente.setText("");
                 ventana.lblCliente.setText("PÚBLICO GENERAL (USUARIO NULL)");
                 tempCliente = "";
-                tempTelefono = "";
+                tempCedula = "";
             });
         }
 
         if (ventana.btnBuscarCliente != null && ventana.btnBuscarCliente.getActionListeners().length == 0) {
             ventana.btnBuscarCliente.addActionListener(e -> {
-                String tel = ventana.txtTelefonoCliente.getText().trim();
-                if (!tel.isEmpty()) {
-                    boolean hallado = false;
-                    List<String> clientes = GestorCache.leerRegistros("clientes.txt");
-                    for (String c : clientes) {
-                        String[] p = c.split(";");
-                        if (p.length >= 2 && p[1].equals(tel)) {
-                            tempTelefono = tel;
-                            tempCliente = p[0] + " (Tel: " + tel + ")";
-                            ventana.lblCliente.setText(tempCliente);
-                            hallado = true;
-                            break;
-                        }
-                    }
-                    if (!hallado) {
-                        tempTelefono = tel;
-                        tempCliente = "Cliente Tel: " + tel;
-                        ventana.lblCliente.setText(tempCliente);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(ventana, "Ingrese un teléfono.");
+                String ced = ventana.txtCedulaCliente.getText().trim();
+                if (ced.isEmpty()) {
+                    JOptionPane.showMessageDialog(ventana, "Ingrese la cédula del cliente.");
+                    return;
                 }
+                // clientes.txt guarda: nombre;telefono;cedula  -> la cédula es el identificador
+                for (String c : GestorCache.leerRegistros("clientes.txt")) {
+                    String[] p = c.split(";");
+                    if (p.length >= 3 && p[2].trim().equals(ced)) {
+                        tempCedula = ced;
+                        tempCliente = p[0] + " (C.C. " + ced + ")";
+                        ventana.lblCliente.setText(tempCliente);
+                        return;
+                    }
+                }
+                JOptionPane.showMessageDialog(ventana,
+                        "No hay ningún cliente registrado con la cédula " + ced + ".\n"
+                        + "Regístrelo primero en Clientes o use \"Público General\".");
             });
         }
 
@@ -233,7 +228,7 @@ public class ControladorCatffee {
 
         if (ventana.btnCancelar != null) {
             ventana.btnCancelar.addActionListener(e -> {
-                tempTelefono = ventana.txtTelefonoCliente.getText();
+                tempCedula = ventana.txtCedulaCliente.getText();
                 ventana.dispose();
                 abrirVentanaPrincipal(rolActual);
             });
@@ -324,16 +319,24 @@ public class ControladorCatffee {
                 String tel = v.txtTelefono.getText().trim();
                 String ced = v.txtCedula.getText().trim();
 
-                if (!nombre.isEmpty() && !tel.isEmpty()) {
-                    v.modeloClientes.addRow(new Object[]{nombre, tel, ced});
-                    GestorCache.guardarRegistro("clientes.txt", nombre + ";" + tel + ";" + ced);
-                    JOptionPane.showMessageDialog(v, "¡Cliente registrado en caché!");
-                    v.txtNombre.setText("");
-                    v.txtTelefono.setText("");
-                    v.txtCedula.setText("");
-                } else {
-                    JOptionPane.showMessageDialog(v, "Ingrese nombre y teléfono del cliente.");
+                if (nombre.isEmpty() || ced.isEmpty()) {
+                    JOptionPane.showMessageDialog(v, "Ingrese nombre y cédula del cliente.");
+                    return;
                 }
+                // La cédula identifica al cliente: no puede repetirse
+                for (String c : GestorCache.leerRegistros("clientes.txt")) {
+                    String[] p = c.split(";");
+                    if (p.length >= 3 && p[2].trim().equals(ced)) {
+                        JOptionPane.showMessageDialog(v, "Ya existe un cliente con esa cédula.");
+                        return;
+                    }
+                }
+                v.modeloClientes.addRow(new Object[]{nombre, tel, ced});
+                GestorCache.guardarRegistro("clientes.txt", nombre + ";" + tel + ";" + ced);
+                JOptionPane.showMessageDialog(v, "¡Cliente registrado!");
+                v.txtNombre.setText("");
+                v.txtTelefono.setText("");
+                v.txtCedula.setText("");
             });
         }
 
@@ -581,18 +584,86 @@ private static void limpiarFormularioInsumo(VentanaInsumos v) {
     }
 
     public static void inicializarVentanaProductos(VentanaProductos v, String rol) {
-        // CORREGIDO: btnCancelar puede estar declarado como Object
-        agregarAccion(v.btnCancelar, e -> {
+        sembrarProductosSiHaceFalta();
+        cargarProductos(v, "");
+
+        // Buscar: con el botón o presionando Enter dentro del campo Nombre
+        v.btnBuscar.addActionListener(e -> cargarProductos(v, v.txtNombre.getText().trim()));
+        v.txtNombre.addActionListener(e -> cargarProductos(v, v.txtNombre.getText().trim()));
+
+        v.btnLimpiar.addActionListener(e -> {
+            v.txtNombre.setText("");
+            v.txtPrecioVenta.setText("");
+            v.tblProductos.clearSelection();
+            cargarProductos(v, "");
+        });
+
+        v.btnCancelar.addActionListener(e -> {
             v.dispose();
             abrirVentanaPrincipal(rolActual);
         });
 
-        if (rolActual.equals("Vendedor")) {
-            if (v.btnGuardar != null) v.btnGuardar.setEnabled(false);
-            if (v.btnActualizar != null) v.btnActualizar.setEnabled(false);
-            if (v.btnEliminar != null) v.btnEliminar.setEnabled(false);
-            if (v.btnAgregarIngrediente != null) v.btnAgregarIngrediente.setEnabled(false);
+        // Solo el Administrador puede guardar productos nuevos
+        if (rolActual.equals("Administrador")) {
+            v.btnGuardar.addActionListener(e -> {
+                String nombre = v.txtNombre.getText().trim();
+                String precio = v.txtPrecioVenta.getText().trim();
+                if (nombre.isEmpty() || precio.isEmpty()) {
+                    JOptionPane.showMessageDialog(v, "Ingrese nombre y precio de venta.");
+                    return;
+                }
+                try {
+                    Integer.parseInt(precio);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(v, "El precio debe ser un número entero.");
+                    return;
+                }
+                for (String linea : GestorCache.leerRegistros("productos.txt")) {
+                    if (linea.split(";")[0].equalsIgnoreCase(nombre)) {
+                        JOptionPane.showMessageDialog(v, "Ya existe un producto con ese nombre.");
+                        return;
+                    }
+                }
+                GestorCache.guardarRegistro("productos.txt", nombre + ";" + precio);
+                v.txtNombre.setText("");
+                v.txtPrecioVenta.setText("");
+                cargarProductos(v, "");
+                JOptionPane.showMessageDialog(v, "¡Producto guardado!");
+            });
         }
+    }
+
+    // --- Auxiliares de Productos ---
+
+    // Si todavía no existe productos.txt, se crea con los productos de ejemplo
+    private static void sembrarProductosSiHaceFalta() {
+        if (GestorCache.leerRegistros("productos.txt").isEmpty()) {
+            GestorCache.guardarRegistro("productos.txt", "Capuchino;8500");
+            GestorCache.guardarRegistro("productos.txt", "Cheesecake;9000");
+            GestorCache.guardarRegistro("productos.txt", "Latte Macchiato;7500");
+            GestorCache.guardarRegistro("productos.txt", "Café Americano;5000");
+            GestorCache.guardarRegistro("productos.txt", "Tarta de Manzana;8000");
+        }
+    }
+
+    // Llena la tabla con los productos cuyo nombre contenga el texto buscado
+    // (sin importar mayúsculas ni tildes). Texto vacío = muestra todos.
+    private static void cargarProductos(VentanaProductos v, String texto) {
+        v.modeloProductos.setRowCount(0);
+        String buscado = normalizar(texto);
+        for (String linea : GestorCache.leerRegistros("productos.txt")) {
+            String[] p = linea.split(";");
+            if (p.length >= 2 && normalizar(p[0]).contains(buscado)) {
+                v.modeloProductos.addRow(new Object[]{p[0], p[1]});
+            }
+        }
+    }
+
+    // "Café" -> "cafe" para que buscar "cafe" también encuentre "Café"
+    private static String normalizar(String t) {
+        String sinTildes = java.text.Normalizer.normalize(t, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return sinTildes.toLowerCase();
     }
 
     // --- COMPRAS ---
