@@ -1,121 +1,272 @@
 package catffee.vista;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 
-public class VentanaProductos extends JFrame {
-    public JTextField txtNombre, txtPrecioVenta, txtCantidad;
-    public JComboBox<String> cmbInsumo;
-    public JButton btnAgregarIngrediente, btnGuardar, btnActualizar, btnEliminar, btnLimpiar;
-    public JTable tblIngredientes, tblProductos;
+/**
+ * Catálogo de productos. El Vendedor solo busca; el Administrador además edita y ve la receta (insumos).
+ * Diseñada con el editor visual de NetBeans (JFrame Form).
+ */
+public class VentanaProductos extends javax.swing.JFrame {
+
     public DefaultTableModel modeloIngredientes, modeloProductos;
-    public Object btnCancelar;
 
     public VentanaProductos(String rol) {
-        setTitle("CATFFEE · Productos");
-        setSize(650, 620);
-        setLocationRelativeTo(null);
-        setLayout(null);
-
-        JLabel lblHeader = new JLabel("CATFFEE · Productos");
-        lblHeader.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        lblHeader.setBounds(25, 15, 300, 25);
-        add(lblHeader);
-
-        JLabel lblNom = new JLabel("Nombre:");
-        lblNom.setBounds(25, 55, 60, 25);
-        add(lblNom);
-
-        txtNombre = new JTextField();
-        txtNombre.setBounds(85, 55, 180, 25);
-        add(txtNombre);
-
-        JLabel lblPrecio = new JLabel("Precio venta:");
-        lblPrecio.setBounds(290, 55, 85, 25);
-        add(lblPrecio);
-
-        txtPrecioVenta = new JTextField();
-        txtPrecioVenta.setBounds(380, 55, 100, 25);
-        add(txtPrecioVenta);
-
-        JLabel lblRecetaHeader = new JLabel("Ingredientes (receta)");
-        lblRecetaHeader.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        lblRecetaHeader.setBounds(25, 95, 200, 20);
-        add(lblRecetaHeader);
-
-        JLabel lblIns = new JLabel("Insumo:");
-        lblIns.setBounds(25, 125, 55, 25);
-        add(lblIns);
-
-        cmbInsumo = new JComboBox<>(new String[]{"Café molido", "Leche", "Azúcar", "Chocolate"});
-        cmbInsumo.setBounds(80, 125, 150, 25);
-        add(cmbInsumo);
-
-        JLabel lblCant = new JLabel("Cant.:");
-        lblCant.setBounds(245, 125, 45, 25);
-        add(lblCant);
-
-        txtCantidad = new JTextField();
-        txtCantidad.setBounds(285, 125, 50, 25);
-        add(txtCantidad);
-
-        btnAgregarIngrediente = new JButton("Agregar ingrediente");
-        btnAgregarIngrediente.setBounds(350, 123, 160, 28);
-        add(btnAgregarIngrediente);
-
-        // Tabla ingredientes
-        modeloIngredientes = new DefaultTableModel(new String[]{"Insumo", "Cantidad"}, 0);
+        initComponents();
+        modeloIngredientes = (DefaultTableModel) tblIngredientes.getModel();
+        modeloProductos = (DefaultTableModel) tblProductos.getModel();
         modeloIngredientes.addRow(new Object[]{"Café molido", 18});
         modeloIngredientes.addRow(new Object[]{"Leche", 200});
-        tblIngredientes = new JTable(modeloIngredientes);
-        JScrollPane scroll1 = new JScrollPane(tblIngredientes);
-        scroll1.setBounds(25, 160, 580, 90);
-        add(scroll1);
+        setLocationRelativeTo(null);
 
-        // Tabla productos
-        modeloProductos = new DefaultTableModel(new String[]{"Nombre", "Precio venta"}, 0);
-        modeloProductos.addRow(new Object[]{"Capuchino", 8500});
-        modeloProductos.addRow(new Object[]{"Cheesecake", 9000});
-        tblProductos = new JTable(modeloProductos);
-        JScrollPane scroll2 = new JScrollPane(tblProductos);
-        scroll2.setBounds(25, 265, 580, 160);
-        add(scroll2);
-
-        // Botones de acción inferior
-        btnGuardar = new JButton("Guardar");
-        btnGuardar.setBounds(25, 445, 110, 35);
-        add(btnGuardar);
-
-        btnActualizar = new JButton("Actualizar");
-        btnActualizar.setBounds(145, 445, 110, 35);
-        add(btnActualizar);
-
-        btnEliminar = new JButton("Eliminar");
-        btnEliminar.setBounds(265, 445, 110, 35);
-        add(btnEliminar);
-
-        btnLimpiar = new JButton("Limpiar");
-        btnLimpiar.setBounds(385, 445, 110, 35);
-        add(btnLimpiar);
-
-        // Restricción: Si entra el Vendedor, solo consulta (se bloquean edición y botones de modificación)
+        // El Vendedor solo busca y consulta: se ocultan edición y todo lo de insumos/receta
         if (rol.equals("Vendedor")) {
-            txtNombre.setEnabled(false);
-            txtPrecioVenta.setEnabled(false);
-            txtCantidad.setEnabled(false);
-            cmbInsumo.setEnabled(false);
-            btnAgregarIngrediente.setEnabled(false);
-            btnGuardar.setEnabled(false);
-            btnActualizar.setEnabled(false);
-            btnEliminar.setEnabled(false);
-            btnLimpiar.setEnabled(false);
+            lblPrecio.setVisible(false);
+            txtPrecioVenta.setVisible(false);
+            btnGuardar.setVisible(false);
+            btnActualizar.setVisible(false);
+            btnEliminar.setVisible(false);
+            lblRecetaHeader.setVisible(false);
+            lblIns.setVisible(false);
+            cmbInsumo.setVisible(false);
+            lblCant.setVisible(false);
+            txtCantidad.setVisible(false);
+            btnAgregarIngrediente.setVisible(false);
+            jScrollPane2.setVisible(false);   // tabla de ingredientes
+            setSize(getWidth(), 360);         // la ventana queda más corta
         }
     }
 
-    public class btnCancelar {
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
 
-        public btnCancelar() {
-        }
-    }
+        lblHeader = new javax.swing.JLabel();
+        lblNom = new javax.swing.JLabel();
+        txtNombre = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JButton();
+        lblPrecio = new javax.swing.JLabel();
+        txtPrecioVenta = new javax.swing.JTextField();
+        tblProductos = new javax.swing.JTable();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        btnGuardar = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnLimpiar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        lblRecetaHeader = new javax.swing.JLabel();
+        lblIns = new javax.swing.JLabel();
+        cmbInsumo = new javax.swing.JComboBox<>();
+        lblCant = new javax.swing.JLabel();
+        txtCantidad = new javax.swing.JTextField();
+        btnAgregarIngrediente = new javax.swing.JButton();
+        tblIngredientes = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("CATFFEE · Productos");
+
+        lblHeader.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
+        lblHeader.setText("CATFFEE · Productos"); // NOI18N
+
+        lblNom.setText("Nombre:"); // NOI18N
+
+
+        btnBuscar.setText("Buscar"); // NOI18N
+
+        lblPrecio.setText("Precio venta:"); // NOI18N
+
+
+        tblProductos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre", "Precio venta"
+            }
+        ));
+        jScrollPane1.setViewportView(tblProductos);
+
+        btnGuardar.setText("Guardar"); // NOI18N
+
+        btnActualizar.setText("Actualizar"); // NOI18N
+
+        btnEliminar.setText("Eliminar"); // NOI18N
+
+        btnLimpiar.setText("Limpiar"); // NOI18N
+
+        btnCancelar.setText("← Retroceder"); // NOI18N
+
+        lblRecetaHeader.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblRecetaHeader.setText("Ingredientes (receta)"); // NOI18N
+
+        lblIns.setText("Insumo:"); // NOI18N
+
+        cmbInsumo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Café molido", "Leche", "Azúcar", "Chocolate" }));
+
+        lblCant.setText("Cant.:"); // NOI18N
+
+
+        btnAgregarIngrediente.setText("Agregar ingrediente"); // NOI18N
+
+        tblIngredientes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Insumo", "Cantidad"
+            }
+        ));
+        jScrollPane2.setViewportView(tblIngredientes);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(lblHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(lblNom, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(85, 85, 85)
+                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(275, 275, 275)
+                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(385, 385, 385)
+                .addComponent(lblPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(475, 475, 475)
+                .addComponent(txtPrecioVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(140, 140, 140)
+                .addComponent(btnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(255, 255, 255)
+                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(370, 370, 370)
+                .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(485, 485, 485)
+                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(lblRecetaHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(lblIns, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(80, 80, 80)
+                .addComponent(cmbInsumo, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(245, 245, 245)
+                .addComponent(lblCant, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(285, 285, 285)
+                .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(350, 350, 350)
+                .addComponent(btnAgregarIngrediente, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(0, 634, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(lblHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(55, 55, 55)
+                .addComponent(lblNom, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(55, 55, 55)
+                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(55, 55, 55)
+                .addComponent(lblPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(55, 55, 55)
+                .addComponent(txtPrecioVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(95, 95, 95)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(270, 270, 270)
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(270, 270, 270)
+                .addComponent(btnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(270, 270, 270)
+                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(270, 270, 270)
+                .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(270, 270, 270)
+                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(325, 325, 325)
+                .addComponent(lblRecetaHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(355, 355, 355)
+                .addComponent(lblIns, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(355, 355, 355)
+                .addComponent(cmbInsumo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(355, 355, 355)
+                .addComponent(lblCant, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(355, 355, 355)
+                .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(353, 353, 353)
+                .addComponent(btnAgregarIngrediente, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(390, 390, 390)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(0, 521, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JLabel lblHeader;
+    public javax.swing.JLabel lblNom;
+    public javax.swing.JTextField txtNombre;
+    public javax.swing.JButton btnBuscar;
+    public javax.swing.JLabel lblPrecio;
+    public javax.swing.JTextField txtPrecioVenta;
+    public javax.swing.JTable tblProductos;
+    public javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JButton btnGuardar;
+    public javax.swing.JButton btnActualizar;
+    public javax.swing.JButton btnEliminar;
+    public javax.swing.JButton btnLimpiar;
+    public javax.swing.JButton btnCancelar;
+    public javax.swing.JLabel lblRecetaHeader;
+    public javax.swing.JLabel lblIns;
+    public javax.swing.JComboBox<String> cmbInsumo;
+    public javax.swing.JLabel lblCant;
+    public javax.swing.JTextField txtCantidad;
+    public javax.swing.JButton btnAgregarIngrediente;
+    public javax.swing.JTable tblIngredientes;
+    public javax.swing.JScrollPane jScrollPane2;
+    // End of variables declaration//GEN-END:variables
 }
