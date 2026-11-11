@@ -10,6 +10,7 @@ public class VentanaProductos extends JFrame {
     public JButton btnAgregarIngrediente, btnGuardar, btnActualizar, btnEliminar, btnLimpiar;
     public JTable tblIngredientes, tblProductos;
     public DefaultTableModel modeloIngredientes, modeloProductos;
+    public Object btnCancelar;
 
     public VentanaProductos(String rol) {
         setTitle("CATFFEE · Productos");
@@ -109,6 +110,12 @@ public class VentanaProductos extends JFrame {
             btnActualizar.setEnabled(false);
             btnEliminar.setEnabled(false);
             btnLimpiar.setEnabled(false);
+        }
+    }
+
+    public class btnCancelar {
+
+        public btnCancelar() {
         }
     }
 }

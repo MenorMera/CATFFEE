@@ -1,8 +1,9 @@
 package catffee.vista;
 
+import catffee.controlador.ControladorCatffee;
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 
 public class VentanaVenta extends JFrame {
     public JTextField txtTelefonoCliente, txtCantidad;
@@ -13,13 +14,15 @@ public class VentanaVenta extends JFrame {
     public DefaultTableModel modeloCarrito;
 
     public VentanaVenta() {
-        setTitle("CATFFEE · Nueva venta");
+        setTitle("CATFFEE · Nueva Venta");
         setSize(650, 520);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(null);
+        getContentPane().setBackground(new Color(245, 247, 250));
 
-        JLabel lblHeader = new JLabel("CATFFEE · Nueva venta");
-        lblHeader.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        JLabel lblHeader = new JLabel("CATFFEE · Registro de Venta");
+        lblHeader.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblHeader.setBounds(25, 15, 300, 25);
         add(lblHeader);
 
@@ -35,21 +38,27 @@ public class VentanaVenta extends JFrame {
         btnBuscarCliente.setBounds(235, 60, 85, 25);
         add(btnBuscarCliente);
 
-        btnSinCliente = new JButton("Sin cliente");
-        btnSinCliente.setBounds(330, 60, 110, 25);
+        btnSinCliente = new JButton("Público General");
+        btnSinCliente.setBounds(330, 60, 140, 25);
         add(btnSinCliente);
 
-        lblCliente = new JLabel("Ana Pérez (Cliente frecuente)");
-        lblCliente.setFont(new Font("Segoe UI", Font.ITALIC, 12));
-        lblCliente.setForeground(new Color(0, 100, 0));
-        lblCliente.setBounds(85, 90, 300, 20);
+        lblCliente = new JLabel("PÚBLICO GENERAL (USUARIO NULL)");
+        lblCliente.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 12));
+        lblCliente.setForeground(new Color(100, 100, 100));
+        lblCliente.setBounds(85, 90, 350, 20);
         add(lblCliente);
 
         JLabel lblProd = new JLabel("Producto:");
         lblProd.setBounds(25, 125, 65, 25);
         add(lblProd);
 
-        cmbProducto = new JComboBox<>(new String[]{"Capuchino - $8500", "Cheesecake - $9000", "Latte Macchiato - $7500"});
+        cmbProducto = new JComboBox<>(new String[]{
+            "Capuchino - 8500", 
+            "Cheesecake - 9000", 
+            "Latte Macchiato - 7500",
+            "Café Americano - 5000",
+            "Tarta de Manzana - 8000"
+        });
         cmbProducto.setBounds(95, 125, 180, 25);
         add(cmbProducto);
 
@@ -61,37 +70,37 @@ public class VentanaVenta extends JFrame {
         txtCantidad.setBounds(330, 125, 50, 25);
         add(txtCantidad);
 
-        btnAgregar = new JButton("Agregar al carrito");
-        btnAgregar.setBounds(395, 123, 145, 28);
+        btnAgregar = new JButton("Agregar");
+        btnAgregar.setBounds(395, 123, 100, 28);
         add(btnAgregar);
 
-        // Tabla del carrito
         modeloCarrito = new DefaultTableModel(new String[]{"Producto", "Cant.", "Precio", "Subtotal"}, 0);
-        modeloCarrito.addRow(new Object[]{"Capuchino", 2, 8500, 17000});
-        modeloCarrito.addRow(new Object[]{"Cheesecake", 1, 9000, 9000});
-        
         tblCarrito = new JTable(modeloCarrito);
         JScrollPane scroll = new JScrollPane(tblCarrito);
         scroll.setBounds(25, 165, 580, 180);
         add(scroll);
 
         btnQuitar = new JButton("Quitar");
-        btnQuitar.setBounds(25, 355, 80, 30);
+        btnQuitar.setBounds(25, 355, 90, 30);
         add(btnQuitar);
 
-        lblTotal = new JLabel("Total: $26000");
-        lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblTotal = new JLabel("Total: $0");
+        lblTotal.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblTotal.setForeground(new Color(20, 100, 20));
         lblTotal.setBounds(470, 355, 150, 30);
         add(lblTotal);
 
-        btnConfirmar = new JButton("Confirmar venta");
-        btnConfirmar.setBounds(320, 415, 135, 35);
+        btnConfirmar = new JButton("Confirmar Venta");
+        btnConfirmar.setBounds(280, 415, 150, 35);
+        btnConfirmar.setBackground(new Color(40, 167, 69));
+        btnConfirmar.setForeground(Color.WHITE);
         add(btnConfirmar);
 
-        btnCancelar = new JButton("Cancelar");
-        btnCancelar.setBounds(470, 415, 135, 35);
+        // Botón de retroceso seguro
+        btnCancelar = new JButton("← Retroceder");
+        btnCancelar.setBounds(440, 415, 165, 35);
         add(btnCancelar);
 
-        btnCancelar.addActionListener(e -> dispose());
+        ControladorCatffee.inicializarVentanaVenta(this);
     }
 }

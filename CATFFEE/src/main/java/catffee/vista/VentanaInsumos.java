@@ -10,6 +10,7 @@ public class VentanaInsumos extends JFrame {
     public JButton btnGuardar, btnActualizar, btnEliminar, btnLimpiar;
     public JTable tblInsumos;
     public DefaultTableModel modeloInsumos;
+    public Object btnCancelar;
 
     public VentanaInsumos() {
         setTitle("CATFFEE · Insumos");
@@ -85,5 +86,9 @@ public class VentanaInsumos extends JFrame {
         btnLimpiar = new JButton("Limpiar");
         btnLimpiar.setBounds(385, 385, 110, 35);
         add(btnLimpiar);
+        
+        JButton btnCancelar = new JButton("← Retroceder");
+        btnCancelar.setBounds(500, 435, 120, 35);
+        add(btnCancelar);
     }
 }
