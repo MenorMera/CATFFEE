@@ -1,0 +1,34 @@
+================================================================
+                 FACTURA ELECTRÓNICA DE VENTA                   
+                      CATFFEE S.A.S.                            
+                 NIT: 901.548.723-1                             
+        Dirección: Calle 46 Bis # 14-20, Cali, Colombia         
+             Contacto: gerencia@catffee.com                     
+================================================================
+Resolución DIAN No. 18764000001234 de 2025/01 al 2027/01
+Prefijo FE desde el número FE-1 hasta FE-50000. Activa.
+----------------------------------------------------------------
+Factura Nro     : FE-97920
+Fecha y Hora    : 2026-11-11 21:03:17
+Medio de Pago   : EFECTIVO / TRANSFERENCIA BANCARIA
+Atendido por    : Empleado (Administrador)
+Adquiriente     : PÚBLICO GENERAL (USUARIO NULL)
+================================================================
+PRODUCTO               | CANT. | P. UNIT    | SUBTOTAL  
+----------------------------------------------------------------
+Capuchino              | 1     | $8500      | $8500     
+----------------------------------------------------------------
+Base Gravable IVA (19%) : $7142,86
+Total IVA (19%)         : $1357,14
+Impoconsumo (0%)        : $0.00
+----------------------------------------------------------------
+TOTAL A PAGAR           : $8500.0
+================================================================
+ELEMENTOS TECNOLÓGICOS DIAN:
+CUFE: a3f5b7c8d9e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5
+----------------------------------------------------------------
+ [QR CODE DIAN SIMULADO] 
+ HTTPS://FACTURAELECTRONICA.DIAN.GOV.CO/KIMOCC/
+================================================================
+       Emitido mediante software autorizado - CATFFEE POS       
+================================================================

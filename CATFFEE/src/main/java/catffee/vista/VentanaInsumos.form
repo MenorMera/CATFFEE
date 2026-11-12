@@ -74,7 +74,15 @@
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-              <Component id="chkSoloReponer" min="-2" pref="250" max="-2" attributes="0"/>
+              <Component id="chkSoloReponer" min="-2" pref="215" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="245" max="-2" attributes="0"/>
+              <Component id="btnSumarStock" min="-2" pref="95" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="345" max="-2" attributes="0"/>
+              <Component id="btnRestarStock" min="-2" pref="90" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="440" max="-2" attributes="0"/>
@@ -160,6 +168,14 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
               <Component id="chkSoloReponer" min="-2" pref="25" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="123" max="-2" attributes="0"/>
+              <Component id="btnSumarStock" min="-2" pref="28" max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="123" max="-2" attributes="0"/>
+              <Component id="btnRestarStock" min="-2" pref="28" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="123" max="-2" attributes="0"/>
@@ -288,7 +304,23 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="chkSoloReponer">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Ver solo los que hay que reponer"/>
+        <Property name="text" type="java.lang.String" value="Solo por reponer"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnSumarStock">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="+ Stock"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnRestarStock">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="- Stock"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>

@@ -33,6 +33,8 @@ public class VentanaInsumos extends javax.swing.JFrame {
         lblProveedor = new javax.swing.JLabel();
         cmbProveedor = new javax.swing.JComboBox<>();
         chkSoloReponer = new javax.swing.JCheckBox();
+        btnSumarStock = new javax.swing.JButton();
+        btnRestarStock = new javax.swing.JButton();
         btnQuitarProveedor = new javax.swing.JButton();
         tblInsumos = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -66,7 +68,11 @@ public class VentanaInsumos extends javax.swing.JFrame {
 
         cmbProveedor.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {  }));
 
-        chkSoloReponer.setText("Ver solo los que hay que reponer"); // NOI18N
+        chkSoloReponer.setText("Solo por reponer"); // NOI18N
+
+        btnSumarStock.setText("+ Stock"); // NOI18N
+
+        btnRestarStock.setText("- Stock"); // NOI18N
 
         btnQuitarProveedor.setText("Quitar este proveedor"); // NOI18N
 
@@ -132,7 +138,13 @@ public class VentanaInsumos extends javax.swing.JFrame {
                 .addComponent(cmbProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addComponent(chkSoloReponer, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(chkSoloReponer, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(245, 245, 245)
+                .addComponent(btnSumarStock, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(345, 345, 345)
+                .addComponent(btnRestarStock, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(440, 440, 440)
                 .addComponent(btnQuitarProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -199,6 +211,12 @@ public class VentanaInsumos extends javax.swing.JFrame {
                 .addComponent(chkSoloReponer, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(123, 123, 123)
+                .addComponent(btnSumarStock, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(123, 123, 123)
+                .addComponent(btnRestarStock, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(123, 123, 123)
                 .addComponent(btnQuitarProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(160, 160, 160)
@@ -238,6 +256,8 @@ public class VentanaInsumos extends javax.swing.JFrame {
     public javax.swing.JLabel lblProveedor;
     public javax.swing.JComboBox<String> cmbProveedor;
     public javax.swing.JCheckBox chkSoloReponer;
+    public javax.swing.JButton btnSumarStock;
+    public javax.swing.JButton btnRestarStock;
     public javax.swing.JButton btnQuitarProveedor;
     public javax.swing.JTable tblInsumos;
     public javax.swing.JScrollPane jScrollPane1;
