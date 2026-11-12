@@ -1,0 +1,7 @@
+Capuchino;8500
+Cheesecake;9000
+Latte Macchiato;7500
+Café Americano;5000
+Tarta de Manzana;8000
+macciato;10000
+Expresso;4500

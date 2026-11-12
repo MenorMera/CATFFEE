@@ -16,7 +16,14 @@ public class Proveedor {
 
     public boolean ofrece(Insumo insumo) { return insumosQueOfrece.contains(insumo); }
     
+    // Un insumo no se repite en el catálogo del proveedor
     public void agregarAlCatalogo(Insumo insumo) {
-        this.insumosQueOfrece.add(insumo);
+        if (!insumosQueOfrece.contains(insumo)) {
+            this.insumosQueOfrece.add(insumo);
+        }
     }
+
+    public String getNombre() { return nombre; }
+    public String getContacto() { return contacto; }
+    public ArrayList<Insumo> getInsumosQueOfrece() { return insumosQueOfrece; }
 }

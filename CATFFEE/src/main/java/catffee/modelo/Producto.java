@@ -16,8 +16,23 @@ public class Producto {
         this.ingredientes = new ArrayList<>();
     }
 
+    // Si el insumo ya es ingrediente de la receta, se SUMA la cantidad (no se repite la fila)
     public void agregarIngrediente(Insumo insumo, double cantidad) {
+        for (int i = 0; i < ingredientes.size(); i++) {
+            Ingrediente ing = ingredientes.get(i);
+            if (ing.getInsumo().equals(insumo)) {
+                ingredientes.set(i, new Ingrediente(insumo, ing.getCantidad() + cantidad));
+                return;
+            }
+        }
         this.ingredientes.add(new Ingrediente(insumo, cantidad));
+    }
+
+    // Quita de la receta el ingrediente que está en la posición indicada
+    public void quitarIngrediente(int indice) {
+        if (indice >= 0 && indice < ingredientes.size()) {
+            ingredientes.remove(indice);
+        }
     }
 
     public boolean hayExistencias(int cantidadVendida) {

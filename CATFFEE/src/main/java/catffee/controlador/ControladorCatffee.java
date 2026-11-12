@@ -1,5 +1,13 @@
 package catffee.controlador;
 
+import catffee.modelo.Ingrediente;
+import catffee.modelo.Insumo;
+import catffee.modelo.Producto;
+import catffee.modelo.Proveedor;
+import catffee.repositorio.InsumoRepositorio;
+import catffee.repositorio.ProductoRepositorio;
+import catffee.repositorio.ProveedorRepositorio;
+import catffee.util.Formato;
 import catffee.vista.*;
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
@@ -20,6 +28,11 @@ public class ControladorCatffee {
     private static VentanaReportes ventanaReportesInstance;
 
     // EL ROL PERMANECE FIJO HASTA CERRAR SESIÓN
+    // Repositorios: el controlador no toca los archivos, le pide todo a ellos
+    private static final InsumoRepositorio insumoRepo = new InsumoRepositorio();
+    private static final ProveedorRepositorio proveedorRepo = new ProveedorRepositorio();
+    private static final ProductoRepositorio productoRepo = new ProductoRepositorio();
+
     public static String rolActual = "Vendedor";
     public static String tempCedula = "";
     public static String tempCliente = "";
@@ -144,6 +157,18 @@ public class ControladorCatffee {
     }
 
     public static void inicializarVentanaVenta(VentanaVenta ventana) {
+        recargarProductosEnVenta(ventana);
+        if (ventana.btnRefrescar != null && ventana.btnRefrescar.getActionListeners().length == 0) {
+            ventana.btnRefrescar.addActionListener(e -> recargarProductosEnVenta(ventana));
+            // Al volver a esta ventana se actualiza solo la lista de productos
+            ventana.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowActivated(java.awt.event.WindowEvent e) {
+                    recargarProductosEnVenta(ventana);
+                }
+            });
+        }
+
         if (ventana.btnSinCliente != null && ventana.btnSinCliente.getActionListeners().length == 0) {
             ventana.btnSinCliente.addActionListener(e -> {
                 ventana.txtCedulaCliente.setText("");
@@ -178,15 +203,19 @@ public class ControladorCatffee {
 
         if (ventana.btnAgregar != null && ventana.btnAgregar.getActionListeners().length == 0) {
             ventana.btnAgregar.addActionListener(e -> {
+                String sel = (String) ventana.cmbProducto.getSelectedItem();
+                if (sel == null) {
+                    JOptionPane.showMessageDialog(ventana, "No hay productos registrados.");
+                    return;
+                }
                 try {
-                    String sel = (String) ventana.cmbProducto.getSelectedItem();
-                    String[] p = sel.split(" - ");
-                    int precio = Integer.parseInt(p[1].trim());
+                    // El combo muestra "Nombre - precio"
+                    int corte = sel.lastIndexOf(" - ");
+                    String nombre = sel.substring(0, corte);
+                    int precio = (int) Double.parseDouble(sel.substring(corte + 3).trim());
                     int cant = Integer.parseInt(ventana.txtCantidad.getText().trim());
-                    int sub = precio * cant;
-
-                    ventana.modeloCarrito.addRow(new Object[]{p[0], cant, "$" + precio, "$" + sub});
-                    actualizarTotalVenta(ventana);
+                    if (cant <= 0) throw new NumberFormatException();
+                    agregarAlCarrito(ventana, nombre, precio, cant);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(ventana, "Cantidad inválida.");
                 }
@@ -233,6 +262,32 @@ public class ControladorCatffee {
                 abrirVentanaPrincipal(rolActual);
             });
         }
+    }
+
+    // Llena el combo con los productos registrados ("Nombre - precio") y conserva la selección
+    private static void recargarProductosEnVenta(VentanaVenta v) {
+        productoRepo.sembrarSiHaceFalta();
+        Object seleccionado = v.cmbProducto.getSelectedItem();
+        v.cmbProducto.removeAllItems();
+        for (Producto p : productoRepo.listar()) {
+            v.cmbProducto.addItem(p.getNombre() + " - " + Formato.numero(p.getPrecioVenta()));
+        }
+        if (seleccionado != null) v.cmbProducto.setSelectedItem(seleccionado);
+    }
+
+    // Si el producto ya está en el carrito, se suma la cantidad en la misma fila
+    private static void agregarAlCarrito(VentanaVenta v, String nombre, int precio, int cant) {
+        for (int i = 0; i < v.modeloCarrito.getRowCount(); i++) {
+            if (v.modeloCarrito.getValueAt(i, 0).toString().equals(nombre)) {
+                int nuevaCant = Integer.parseInt(v.modeloCarrito.getValueAt(i, 1).toString()) + cant;
+                v.modeloCarrito.setValueAt(nuevaCant, i, 1);
+                v.modeloCarrito.setValueAt("$" + (precio * nuevaCant), i, 3);
+                actualizarTotalVenta(v);
+                return;
+            }
+        }
+        v.modeloCarrito.addRow(new Object[]{nombre, cant, "$" + precio, "$" + (precio * cant)});
+        actualizarTotalVenta(v);
     }
 
     private static void actualizarTotalVenta(VentanaVenta v) {
@@ -360,31 +415,26 @@ public class ControladorCatffee {
     }
 
     public static void inicializarVentanaProveedores(VentanaProveedores v) {
-        v.modeloProveedores.setRowCount(0);
-        List<String> lista = GestorCache.leerRegistros("proveedores.txt");
-        for (String pStr : lista) {
-            String[] p = pStr.split(";");
-            if (p.length >= 3) {
-                v.modeloProveedores.addRow(new Object[]{p[0], p[1], p[2]});
-            }
-        }
+        cargarProveedores(v);
 
         if (v.btnGuardar != null) {
             v.btnGuardar.addActionListener(e -> {
                 String nombre = v.txtNombre.getText().trim();
                 String tel = v.txtTelefono.getText().trim();
-                String prod = v.txtProducto.getText().trim();
 
-                if (!nombre.isEmpty()) {
-                    v.modeloProveedores.addRow(new Object[]{nombre, tel, prod});
-                    GestorCache.guardarRegistro("proveedores.txt", nombre + ";" + tel + ";" + prod);
-                    JOptionPane.showMessageDialog(v, "¡Proveedor registrado!");
-                    v.txtNombre.setText("");
-                    v.txtTelefono.setText("");
-                    v.txtProducto.setText("");
-                } else {
+                if (nombre.isEmpty()) {
                     JOptionPane.showMessageDialog(v, "Ingrese el nombre del proveedor.");
+                    return;
                 }
+                if (!proveedorRepo.guardar(new Proveedor(nombre, tel))) {
+                    JOptionPane.showMessageDialog(v, "Ya existe un proveedor con ese nombre.");
+                    return;
+                }
+                cargarProveedores(v);
+                JOptionPane.showMessageDialog(v, "¡Proveedor registrado!\n"
+                        + "Ya puede elegirlo en la ventana Insumos para asignarle sus insumos.");
+                v.txtNombre.setText("");
+                v.txtTelefono.setText("");
             });
         }
 
@@ -393,6 +443,19 @@ public class ControladorCatffee {
                 v.dispose();
                 abrirVentanaPrincipal(rolActual);
             });
+        }
+    }
+
+    // La columna "Insumos que ofrece" sale del catálogo del proveedor
+    private static void cargarProveedores(VentanaProveedores v) {
+        v.modeloProveedores.setRowCount(0);
+        for (Proveedor p : proveedorRepo.listar()) {
+            StringBuilder insumos = new StringBuilder();
+            for (Insumo i : p.getInsumosQueOfrece()) {
+                if (insumos.length() > 0) insumos.append(", ");
+                insumos.append(i.getDescripcion());
+            }
+            v.modeloProveedores.addRow(new Object[]{p.getNombre(), p.getContacto(), insumos.toString()});
         }
     }
 
@@ -442,136 +505,198 @@ public class ControladorCatffee {
         if (ventanaPrincipalInstance != null) ventanaPrincipalInstance.dispose();
     }
 
-public static void inicializarVentanaInsumos(VentanaInsumos v) {
-    cargarInsumos(v, false);
+    private static final String SIN_PROVEEDOR = "(sin proveedor)";
+    private static String filtroInsumos = "";
 
-    // Clic en una fila -> llena el formulario
-    v.tblInsumos.getSelectionModel().addListSelectionListener(e -> {
-        if (e.getValueIsAdjusting()) return;
-        int fila = v.tblInsumos.getSelectedRow();
-        if (fila >= 0) {
+    public static void inicializarVentanaInsumos(VentanaInsumos v) {
+        filtroInsumos = "";
+        recargarProveedoresEnCombo(v);
+        cargarInsumos(v);
+
+        // Si se registra un proveedor y se vuelve a esta ventana, el combo se actualiza solo
+        v.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowActivated(java.awt.event.WindowEvent e) {
+                recargarProveedoresEnCombo(v);
+            }
+        });
+
+        // Al elegir una fila se llenan los campos para poder editarla
+        v.tblInsumos.getSelectionModel().addListSelectionListener(e -> {
+            int fila = v.tblInsumos.getSelectedRow();
+            if (e.getValueIsAdjusting() || fila < 0) return;
+            Insumo ins = insumoRepo.buscarPorDescripcion(v.modeloInsumos.getValueAt(fila, 0).toString());
+            if (ins == null) return;
+            v.txtDescripcion.setText(ins.getDescripcion());
+            v.txtStockActual.setText(Formato.numero(ins.getStockActual()));
+            v.txtStockMinimo.setText(Formato.numero(ins.getStockMinimo()));
+            v.txtCosto.setText(Formato.numero(ins.getPrecioCosto()));
+            java.util.ArrayList<String> provs = proveedorRepo.proveedoresDe(ins.getDescripcion());
+            v.cmbProveedor.setSelectedItem(provs.isEmpty() ? SIN_PROVEEDOR : provs.get(0));
+        });
+
+        // BUSCAR: filtra por lo escrito en Descripción
+        v.btnBuscar.addActionListener(e -> {
+            filtroInsumos = v.txtDescripcion.getText().trim();
+            cargarInsumos(v);
+        });
+        v.chkSoloReponer.addActionListener(e -> cargarInsumos(v));
+
+        // GUARDAR
+        v.btnGuardar.addActionListener(e -> {
+            Insumo nuevo = leerFormularioInsumo(v);
+            if (nuevo == null) return;
+            if (!insumoRepo.guardar(nuevo)) {
+                JOptionPane.showMessageDialog(v, "Ya existe un insumo con esa descripción.");
+                return;
+            }
+            String prov = proveedorSeleccionado(v);
+            if (prov != null) proveedorRepo.agregarAlCatalogo(prov, nuevo.getDescripcion());
+            limpiarFormularioInsumo(v);
+            cargarInsumos(v);
+            JOptionPane.showMessageDialog(v, "¡Insumo guardado!");
+        });
+
+        // ACTUALIZAR (también asigna el proveedor elegido en el combo)
+        v.btnActualizar.addActionListener(e -> {
+            int fila = v.tblInsumos.getSelectedRow();
+            if (fila < 0) {
+                JOptionPane.showMessageDialog(v, "Seleccione un insumo de la tabla.");
+                return;
+            }
+            String original = v.modeloInsumos.getValueAt(fila, 0).toString();
+            Insumo nuevo = leerFormularioInsumo(v);
+            if (nuevo == null) return;
+            if (!insumoRepo.actualizar(original, nuevo)) {
+                JOptionPane.showMessageDialog(v, "Ya existe otro insumo con esa descripción.");
+                return;
+            }
+            if (!original.equalsIgnoreCase(nuevo.getDescripcion())) {
+                proveedorRepo.renombrarInsumo(original, nuevo.getDescripcion());
+                productoRepo.renombrarInsumo(original, nuevo.getDescripcion());
+            }
+            String prov = proveedorSeleccionado(v);
+            if (prov != null) proveedorRepo.agregarAlCatalogo(prov, nuevo.getDescripcion());
+            limpiarFormularioInsumo(v);
+            cargarInsumos(v);
+            JOptionPane.showMessageDialog(v, "¡Insumo actualizado!");
+        });
+
+        // ELIMINAR (no deja borrar un insumo que usa alguna receta)
+        v.btnEliminar.addActionListener(e -> {
+            int fila = v.tblInsumos.getSelectedRow();
+            if (fila < 0) {
+                JOptionPane.showMessageDialog(v, "Seleccione un insumo de la tabla.");
+                return;
+            }
             String desc = v.modeloInsumos.getValueAt(fila, 0).toString();
-            v.txtDescripcion.setText(desc);
-            v.txtStockActual.setText(v.modeloInsumos.getValueAt(fila, 1).toString());
-            v.txtStockMinimo.setText(v.modeloInsumos.getValueAt(fila, 2).toString());
-            String[] reg = buscarInsumo(desc);
-            v.txtCosto.setText(reg != null && reg.length >= 5 ? reg[4] : "");
+            java.util.ArrayList<String> usan = productoRepo.productosQueUsan(desc);
+            if (!usan.isEmpty()) {
+                JOptionPane.showMessageDialog(v, "No se puede eliminar \"" + desc
+                        + "\": lo usan las recetas de: " + String.join(", ", usan) + ".");
+                return;
+            }
+            int r = JOptionPane.showConfirmDialog(v, "¿Eliminar el insumo \"" + desc + "\"?",
+                    "Confirmar", JOptionPane.YES_NO_OPTION);
+            if (r != JOptionPane.YES_OPTION) return;
+            insumoRepo.eliminar(desc);
+            proveedorRepo.quitarInsumo(desc);
+            limpiarFormularioInsumo(v);
+            cargarInsumos(v);
+        });
+
+        // QUITAR PROVEEDOR: saca al proveedor elegido en el combo del insumo seleccionado
+        v.btnQuitarProveedor.addActionListener(e -> {
+            int fila = v.tblInsumos.getSelectedRow();
+            String prov = proveedorSeleccionado(v);
+            if (fila < 0 || prov == null) {
+                JOptionPane.showMessageDialog(v, "Seleccione un insumo y el proveedor que desea quitarle.");
+                return;
+            }
+            String desc = v.modeloInsumos.getValueAt(fila, 0).toString();
+            if (proveedorRepo.quitarDelCatalogo(prov, desc)) {
+                cargarInsumos(v);
+            } else {
+                JOptionPane.showMessageDialog(v, prov + " no ofrecía \"" + desc + "\".");
+            }
+        });
+
+        // LIMPIAR
+        v.btnLimpiar.addActionListener(e -> {
+            filtroInsumos = "";
+            v.chkSoloReponer.setSelected(false);
+            limpiarFormularioInsumo(v);
+            cargarInsumos(v);
+        });
+
+        v.btnCancelar.addActionListener(e -> {
+            v.dispose();
+            abrirVentanaPrincipal(rolActual);
+        });
+    }
+
+    // --- Auxiliares de Insumos ---
+
+    private static void cargarInsumos(VentanaInsumos v) {
+        v.modeloInsumos.setRowCount(0);
+        for (Insumo i : insumoRepo.buscar(filtroInsumos, v.chkSoloReponer.isSelected())) {
+            String proveedores = String.join(", ", proveedorRepo.proveedoresDe(i.getDescripcion()));
+            v.modeloInsumos.addRow(new Object[]{
+                i.getDescripcion(),
+                Formato.numero(i.getStockActual()),
+                Formato.numero(i.getStockMinimo()),
+                i.necesitaReposicion() ? "REPONER" : "OK",
+                proveedores});
         }
-    });
+    }
 
-    // Filtro "solo los que hay que reponer"
-    v.chkSoloReponer.addActionListener(e -> cargarInsumos(v, v.chkSoloReponer.isSelected()));
-
-    // Guardar (nuevo)
-    v.btnGuardar.addActionListener(e -> {
-        String[] d = leerFormularioInsumo(v);
-        if (d == null) return;
-        GestorCache.guardarRegistro("insumos.txt", String.join(";", d));
-        limpiarFormularioInsumo(v);
-        cargarInsumos(v, v.chkSoloReponer.isSelected());
-        JOptionPane.showMessageDialog(v, "¡Insumo guardado!");
-    });
-
-    // Actualizar (el seleccionado)
-    v.btnActualizar.addActionListener(e -> {
-        int fila = v.tblInsumos.getSelectedRow();
-        if (fila < 0) {
-            JOptionPane.showMessageDialog(v, "Seleccione un insumo de la tabla.");
-            return;
+    // Vuelve a llenar el combo con los proveedores registrados y conserva la selección
+    private static void recargarProveedoresEnCombo(VentanaInsumos v) {
+        Object seleccionado = v.cmbProveedor.getSelectedItem();
+        v.cmbProveedor.removeAllItems();
+        v.cmbProveedor.addItem(SIN_PROVEEDOR);
+        for (String nombre : proveedorRepo.nombres()) {
+            v.cmbProveedor.addItem(nombre);
         }
-        String original = v.modeloInsumos.getValueAt(fila, 0).toString();
-        String[] d = leerFormularioInsumo(v);
-        if (d == null) return;
+        if (seleccionado != null) v.cmbProveedor.setSelectedItem(seleccionado);
+    }
 
-        List<String> nuevas = new java.util.ArrayList<>();
-        for (String linea : GestorCache.leerRegistros("insumos.txt")) {
-            nuevas.add(linea.split(";")[0].equals(original) ? String.join(";", d) : linea);
+    // null si está en "(sin proveedor)"
+    private static String proveedorSeleccionado(VentanaInsumos v) {
+        Object sel = v.cmbProveedor.getSelectedItem();
+        if (sel == null || sel.toString().equals(SIN_PROVEEDOR)) return null;
+        return sel.toString();
+    }
+
+    // Valida el formulario y devuelve el Insumo (o null si hay un error, ya avisado)
+    private static Insumo leerFormularioInsumo(VentanaInsumos v) {
+        String desc = v.txtDescripcion.getText().trim();
+        if (desc.isEmpty()) {
+            JOptionPane.showMessageDialog(v, "Ingrese la descripción del insumo.");
+            return null;
         }
-        GestorCache.sobrescribirRegistros("insumos.txt", nuevas);
-        limpiarFormularioInsumo(v);
-        cargarInsumos(v, v.chkSoloReponer.isSelected());
-    });
-
-    // Eliminar
-    v.btnEliminar.addActionListener(e -> {
-        int fila = v.tblInsumos.getSelectedRow();
-        if (fila < 0) {
-            JOptionPane.showMessageDialog(v, "Seleccione un insumo de la tabla.");
-            return;
+        try {
+            double stock = Formato.aNumero(v.txtStockActual.getText());
+            double minimo = Formato.aNumero(v.txtStockMinimo.getText());
+            String c = v.txtCosto.getText().trim();
+            double costo = c.isEmpty() ? 0 : Formato.aNumero(c);
+            if (stock < 0 || minimo < 0 || costo < 0) throw new NumberFormatException();
+            return new Insumo(desc, stock, minimo, costo);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(v, "Stock, mínimo y costo deben ser números mayores o iguales a 0.");
+            return null;
         }
-        String desc = v.modeloInsumos.getValueAt(fila, 0).toString();
-        int ok = JOptionPane.showConfirmDialog(v, "¿Eliminar \"" + desc + "\"?", "Confirmar",
-                JOptionPane.YES_NO_OPTION);
-        if (ok != JOptionPane.YES_OPTION) return;
+    }
 
-        List<String> nuevas = new java.util.ArrayList<>();
-        for (String linea : GestorCache.leerRegistros("insumos.txt")) {
-            if (!linea.split(";")[0].equals(desc)) nuevas.add(linea);
-        }
-        GestorCache.sobrescribirRegistros("insumos.txt", nuevas);
-        limpiarFormularioInsumo(v);
-        cargarInsumos(v, v.chkSoloReponer.isSelected());
-    });
-
-    // Limpiar
-    v.btnLimpiar.addActionListener(e -> {
-        limpiarFormularioInsumo(v);
+    private static void limpiarFormularioInsumo(VentanaInsumos v) {
+        v.txtDescripcion.setText("");
+        v.txtStockActual.setText("");
+        v.txtStockMinimo.setText("");
+        v.txtCosto.setText("");
+        v.cmbProveedor.setSelectedItem(SIN_PROVEEDOR);
         v.tblInsumos.clearSelection();
-    });
-
-    agregarAccion(v.btnCancelar, e -> {
-        v.dispose();
-        abrirVentanaPrincipal(rolActual);
-    });
-}
-
-// --- Auxiliares de Insumos ---
-private static void cargarInsumos(VentanaInsumos v, boolean soloReponer) {
-    v.modeloInsumos.setRowCount(0);
-    for (String linea : GestorCache.leerRegistros("insumos.txt")) {
-        String[] p = linea.split(";");
-        if (p.length >= 4 && (!soloReponer || p[3].equals("REPONER"))) {
-            v.modeloInsumos.addRow(new Object[]{p[0], p[1], p[2], p[3]});
-        }
     }
-}
 
-private static String[] buscarInsumo(String desc) {
-    for (String linea : GestorCache.leerRegistros("insumos.txt")) {
-        String[] p = linea.split(";");
-        if (p[0].equals(desc)) return p;
-    }
-    return null;
-}
-
-// Devuelve {desc, stock, minimo, estado, costo} o null si hay error
-private static String[] leerFormularioInsumo(VentanaInsumos v) {
-    String desc = v.txtDescripcion.getText().trim();
-    String act = v.txtStockActual.getText().trim();
-    String min = v.txtStockMinimo.getText().trim();
-    String costo = v.txtCosto.getText().trim();
-    if (desc.isEmpty() || act.isEmpty() || min.isEmpty()) {
-        JOptionPane.showMessageDialog(v, "Complete descripción, stock actual y stock mínimo.");
-        return null;
-    }
-    try {
-        int a = Integer.parseInt(act);
-        int m = Integer.parseInt(min);
-        if (!costo.isEmpty()) Integer.parseInt(costo);
-        String estado = a <= m ? "REPONER" : "OK";
-        return new String[]{desc, act, min, estado, costo.isEmpty() ? "0" : costo};
-    } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(v, "Stock y costo deben ser números enteros.");
-        return null;
-    }
-}
-
-private static void limpiarFormularioInsumo(VentanaInsumos v) {
-    v.txtDescripcion.setText("");
-    v.txtStockActual.setText("");
-    v.txtStockMinimo.setText("");
-    v.txtCosto.setText("");
-}
     // --- PRODUCTOS ---
     public static void abrirVentanaProductos(String rol) {
         if (ventanaProductosInstance == null || !ventanaProductosInstance.isVisible()) {
@@ -583,18 +708,27 @@ private static void limpiarFormularioInsumo(VentanaInsumos v) {
         if (ventanaPrincipalInstance != null) ventanaPrincipalInstance.dispose();
     }
 
+    // Receta que se está armando en pantalla (todavía no guardada)
+    private static Producto borradorReceta = new Producto("", 0);
+
     public static void inicializarVentanaProductos(VentanaProductos v, String rol) {
-        sembrarProductosSiHaceFalta();
+        productoRepo.sembrarSiHaceFalta();
+        borradorReceta = new Producto("", 0);
         cargarProductos(v, "");
 
-        // Buscar: con el botón o presionando Enter dentro del campo Nombre
+        // BUSCAR: con el botón o presionando Enter dentro del campo Nombre
         v.btnBuscar.addActionListener(e -> cargarProductos(v, v.txtNombre.getText().trim()));
         v.txtNombre.addActionListener(e -> cargarProductos(v, v.txtNombre.getText().trim()));
 
-        v.btnLimpiar.addActionListener(e -> {
+        // ACTUALIZAR LISTA: vuelve a leer todo (por si el administrador agregó productos nuevos)
+        v.btnRefrescar.addActionListener(e -> {
             v.txtNombre.setText("");
-            v.txtPrecioVenta.setText("");
-            v.tblProductos.clearSelection();
+            cargarProductos(v, "");
+            recargarInsumosEnCombo(v);
+        });
+
+        v.btnLimpiar.addActionListener(e -> {
+            limpiarFormularioProducto(v);
             cargarProductos(v, "");
         });
 
@@ -603,67 +737,172 @@ private static void limpiarFormularioInsumo(VentanaInsumos v) {
             abrirVentanaPrincipal(rolActual);
         });
 
-        // Solo el Administrador puede guardar productos nuevos
-        if (rolActual.equals("Administrador")) {
-            v.btnGuardar.addActionListener(e -> {
-                String nombre = v.txtNombre.getText().trim();
-                String precio = v.txtPrecioVenta.getText().trim();
-                if (nombre.isEmpty() || precio.isEmpty()) {
-                    JOptionPane.showMessageDialog(v, "Ingrese nombre y precio de venta.");
-                    return;
-                }
-                try {
-                    Integer.parseInt(precio);
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(v, "El precio debe ser un número entero.");
-                    return;
-                }
-                for (String linea : GestorCache.leerRegistros("productos.txt")) {
-                    if (linea.split(";")[0].equalsIgnoreCase(nombre)) {
-                        JOptionPane.showMessageDialog(v, "Ya existe un producto con ese nombre.");
-                        return;
-                    }
-                }
-                GestorCache.guardarRegistro("productos.txt", nombre + ";" + precio);
-                v.txtNombre.setText("");
-                v.txtPrecioVenta.setText("");
-                cargarProductos(v, "");
-                JOptionPane.showMessageDialog(v, "¡Producto guardado!");
-            });
-        }
+        // Todo lo siguiente es solo del Administrador
+        if (!rolActual.equals("Administrador")) return;
+
+        recargarInsumosEnCombo(v);
+        v.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowActivated(java.awt.event.WindowEvent e) {
+                recargarInsumosEnCombo(v);   // por si se registraron insumos nuevos
+            }
+        });
+
+        // Al elegir un producto se cargan sus datos y su receta
+        v.tblProductos.getSelectionModel().addListSelectionListener(e -> {
+            int fila = v.tblProductos.getSelectedRow();
+            if (e.getValueIsAdjusting() || fila < 0) return;
+            Producto p = productoRepo.obtener(v.modeloProductos.getValueAt(fila, 0).toString());
+            if (p == null) return;
+            borradorReceta = p;
+            v.txtNombre.setText(p.getNombre());
+            v.txtPrecioVenta.setText(Formato.numero(p.getPrecioVenta()));
+            mostrarReceta(v);
+        });
+
+        // AGREGAR INGREDIENTE: si el insumo ya está en la receta, se suma la cantidad
+        v.btnAgregarIngrediente.addActionListener(e -> {
+            Object sel = v.cmbInsumo.getSelectedItem();
+            if (sel == null) {
+                JOptionPane.showMessageDialog(v, "Primero registre insumos en la ventana Insumos.");
+                return;
+            }
+            double cant;
+            try {
+                cant = Formato.aNumero(v.txtCantidad.getText());
+                if (cant <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(v, "La cantidad debe ser un número mayor que 0.");
+                return;
+            }
+            Insumo insumo = insumoRepo.buscarPorDescripcion(sel.toString());
+            if (insumo == null) {
+                JOptionPane.showMessageDialog(v, "Ese insumo ya no existe. Actualice la lista.");
+                recargarInsumosEnCombo(v);
+                return;
+            }
+            borradorReceta.agregarIngrediente(insumo, cant);
+            mostrarReceta(v);
+            v.txtCantidad.setText("");
+        });
+
+        // QUITAR INGREDIENTE
+        v.btnQuitarIngrediente.addActionListener(e -> {
+            int fila = v.tblIngredientes.getSelectedRow();
+            if (fila < 0) {
+                JOptionPane.showMessageDialog(v, "Seleccione un ingrediente de la receta para quitarlo.");
+                return;
+            }
+            borradorReceta.quitarIngrediente(fila);
+            mostrarReceta(v);
+        });
+
+        // GUARDAR
+        v.btnGuardar.addActionListener(e -> {
+            Producto nuevo = leerFormularioProducto(v);
+            if (nuevo == null) return;
+            if (!productoRepo.guardar(nuevo)) {
+                JOptionPane.showMessageDialog(v, "Ya existe un producto con ese nombre.");
+                return;
+            }
+            limpiarFormularioProducto(v);
+            cargarProductos(v, "");
+            JOptionPane.showMessageDialog(v, "¡Producto guardado!");
+        });
+
+        // ACTUALIZAR (nombre, precio y receta del producto seleccionado)
+        v.btnActualizar.addActionListener(e -> {
+            int fila = v.tblProductos.getSelectedRow();
+            if (fila < 0) {
+                JOptionPane.showMessageDialog(v, "Seleccione un producto de la tabla.");
+                return;
+            }
+            String original = v.modeloProductos.getValueAt(fila, 0).toString();
+            Producto nuevo = leerFormularioProducto(v);
+            if (nuevo == null) return;
+            if (!productoRepo.actualizar(original, nuevo)) {
+                JOptionPane.showMessageDialog(v, "Ya existe otro producto con ese nombre.");
+                return;
+            }
+            limpiarFormularioProducto(v);
+            cargarProductos(v, "");
+            JOptionPane.showMessageDialog(v, "¡Producto actualizado!");
+        });
+
+        // ELIMINAR
+        v.btnEliminar.addActionListener(e -> {
+            int fila = v.tblProductos.getSelectedRow();
+            if (fila < 0) {
+                JOptionPane.showMessageDialog(v, "Seleccione un producto de la tabla.");
+                return;
+            }
+            String nombre = v.modeloProductos.getValueAt(fila, 0).toString();
+            int r = JOptionPane.showConfirmDialog(v, "¿Eliminar el producto \"" + nombre + "\" y su receta?",
+                    "Confirmar", JOptionPane.YES_NO_OPTION);
+            if (r != JOptionPane.YES_OPTION) return;
+            productoRepo.eliminar(nombre);
+            limpiarFormularioProducto(v);
+            cargarProductos(v, "");
+        });
     }
 
     // --- Auxiliares de Productos ---
 
-    // Si todavía no existe productos.txt, se crea con los productos de ejemplo
-    private static void sembrarProductosSiHaceFalta() {
-        if (GestorCache.leerRegistros("productos.txt").isEmpty()) {
-            GestorCache.guardarRegistro("productos.txt", "Capuchino;8500");
-            GestorCache.guardarRegistro("productos.txt", "Cheesecake;9000");
-            GestorCache.guardarRegistro("productos.txt", "Latte Macchiato;7500");
-            GestorCache.guardarRegistro("productos.txt", "Café Americano;5000");
-            GestorCache.guardarRegistro("productos.txt", "Tarta de Manzana;8000");
-        }
-    }
-
-    // Llena la tabla con los productos cuyo nombre contenga el texto buscado
-    // (sin importar mayúsculas ni tildes). Texto vacío = muestra todos.
+    // Llena la tabla con los productos cuyo nombre contenga el texto. Texto vacío = todos.
     private static void cargarProductos(VentanaProductos v, String texto) {
         v.modeloProductos.setRowCount(0);
-        String buscado = normalizar(texto);
-        for (String linea : GestorCache.leerRegistros("productos.txt")) {
-            String[] p = linea.split(";");
-            if (p.length >= 2 && normalizar(p[0]).contains(buscado)) {
-                v.modeloProductos.addRow(new Object[]{p[0], p[1]});
-            }
+        for (Producto p : productoRepo.buscar(texto)) {
+            v.modeloProductos.addRow(new Object[]{p.getNombre(), Formato.numero(p.getPrecioVenta())});
         }
     }
 
-    // "Café" -> "cafe" para que buscar "cafe" también encuentre "Café"
-    private static String normalizar(String t) {
-        String sinTildes = java.text.Normalizer.normalize(t, java.text.Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "");
-        return sinTildes.toLowerCase();
+    // La tabla de ingredientes es un reflejo de la receta que se está armando
+    private static void mostrarReceta(VentanaProductos v) {
+        v.modeloIngredientes.setRowCount(0);
+        for (Ingrediente ing : borradorReceta.getIngredientes()) {
+            v.modeloIngredientes.addRow(new Object[]{
+                ing.getInsumo().getDescripcion(), Formato.numero(ing.getCantidad())});
+        }
+    }
+
+    private static void recargarInsumosEnCombo(VentanaProductos v) {
+        Object seleccionado = v.cmbInsumo.getSelectedItem();
+        v.cmbInsumo.removeAllItems();
+        for (Insumo i : insumoRepo.listar()) {
+            v.cmbInsumo.addItem(i.getDescripcion());
+        }
+        if (seleccionado != null) v.cmbInsumo.setSelectedItem(seleccionado);
+    }
+
+    // Valida el formulario y arma el Producto con la receta del borrador (null si hay error, ya avisado)
+    private static Producto leerFormularioProducto(VentanaProductos v) {
+        String nombre = v.txtNombre.getText().trim();
+        if (nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(v, "Ingrese el nombre del producto.");
+            return null;
+        }
+        double precio;
+        try {
+            precio = Formato.aNumero(v.txtPrecioVenta.getText());
+            if (precio <= 0 || precio != Math.rint(precio)) throw new NumberFormatException();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(v, "El precio debe ser un número entero mayor que 0 (pesos).");
+            return null;
+        }
+        Producto p = new Producto(nombre, precio);
+        for (Ingrediente ing : borradorReceta.getIngredientes()) {
+            p.agregarIngrediente(ing.getInsumo(), ing.getCantidad());
+        }
+        return p;
+    }
+
+    private static void limpiarFormularioProducto(VentanaProductos v) {
+        borradorReceta = new Producto("", 0);
+        v.txtNombre.setText("");
+        v.txtPrecioVenta.setText("");
+        v.txtCantidad.setText("");
+        v.tblProductos.clearSelection();
+        v.modeloIngredientes.setRowCount(0);
     }
 
     // --- COMPRAS ---

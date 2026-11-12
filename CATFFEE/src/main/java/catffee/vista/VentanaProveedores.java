@@ -3,7 +3,7 @@ package catffee.vista;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * Registro de proveedores (cache/proveedores.txt). Solo Administrador.
+ * Registro de proveedores. Los insumos que ofrece se asignan desde la ventana Insumos. Solo Administrador.
  * Diseñada con el editor visual de NetBeans (JFrame Form).
  */
 public class VentanaProveedores extends javax.swing.JFrame {
@@ -25,8 +25,6 @@ public class VentanaProveedores extends javax.swing.JFrame {
         txtNombre = new javax.swing.JTextField();
         lblTel = new javax.swing.JLabel();
         txtTelefono = new javax.swing.JTextField();
-        lblProd = new javax.swing.JLabel();
-        txtProducto = new javax.swing.JTextField();
         tblProveedores = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
         btnGuardar = new javax.swing.JButton();
@@ -44,15 +42,12 @@ public class VentanaProveedores extends javax.swing.JFrame {
         lblTel.setText("Teléfono:"); // NOI18N
 
 
-        lblProd.setText("Insumo/Prod:"); // NOI18N
-
-
         tblProveedores.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Proveedor", "Teléfono", "Suministro"
+                "Proveedor", "Teléfono", "Insumos que ofrece"
             }
         ));
         jScrollPane1.setViewportView(tblProveedores);
@@ -82,12 +77,6 @@ public class VentanaProveedores extends javax.swing.JFrame {
                 .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addComponent(lblProd, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(115, 115, 115)
-                .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 510, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
@@ -115,21 +104,15 @@ public class VentanaProveedores extends javax.swing.JFrame {
                 .addGap(55, 55, 55)
                 .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(95, 95, 95)
-                .addComponent(lblProd, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(95, 95, 95)
-                .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(135, 135, 135)
+                .addGap(100, 100, 100)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(335, 335, 335)
+                .addGap(295, 295, 295)
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(335, 335, 335)
+                .addGap(295, 295, 295)
                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGap(0, 401, Short.MAX_VALUE)
+            .addGap(0, 361, Short.MAX_VALUE)
         );
 
         pack();
@@ -141,8 +124,6 @@ public class VentanaProveedores extends javax.swing.JFrame {
     public javax.swing.JTextField txtNombre;
     public javax.swing.JLabel lblTel;
     public javax.swing.JTextField txtTelefono;
-    public javax.swing.JLabel lblProd;
-    public javax.swing.JTextField txtProducto;
     public javax.swing.JTable tblProveedores;
     public javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JButton btnGuardar;

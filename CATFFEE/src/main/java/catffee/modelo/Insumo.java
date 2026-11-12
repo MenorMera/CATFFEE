@@ -40,4 +40,15 @@ public class Insumo {
     public double getStockActual() { return stockActual; }
     public double getStockMinimo() { return stockMinimo; }
     public double getPrecioCosto() { return precioCosto; }
+
+    // Dos insumos son el mismo si tienen la misma descripción (sin importar mayúsculas)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Insumo)) return false;
+        return descripcion.equalsIgnoreCase(((Insumo) o).descripcion);
+    }
+
+    @Override
+    public int hashCode() { return descripcion.toLowerCase().hashCode(); }
 }

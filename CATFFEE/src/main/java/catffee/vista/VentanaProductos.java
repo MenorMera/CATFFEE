@@ -3,7 +3,7 @@ package catffee.vista;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * Catálogo de productos. El Vendedor solo busca; el Administrador además edita y ve la receta (insumos).
+ * Productos y su receta. El Vendedor solo busca y consulta; el Administrador hace el CRUD y arma la receta (insumos).
  * Diseñada con el editor visual de NetBeans (JFrame Form).
  */
 public class VentanaProductos extends javax.swing.JFrame {
@@ -14,11 +14,9 @@ public class VentanaProductos extends javax.swing.JFrame {
         initComponents();
         modeloIngredientes = (DefaultTableModel) tblIngredientes.getModel();
         modeloProductos = (DefaultTableModel) tblProductos.getModel();
-        modeloIngredientes.addRow(new Object[]{"Café molido", 18});
-        modeloIngredientes.addRow(new Object[]{"Leche", 200});
         setLocationRelativeTo(null);
 
-        // El Vendedor solo busca y consulta: se ocultan edición y todo lo de insumos/receta
+        // El Vendedor solo busca y consulta: se oculta la edición y todo lo de insumos/receta
         if (rol.equals("Vendedor")) {
             lblPrecio.setVisible(false);
             txtPrecioVenta.setVisible(false);
@@ -31,8 +29,9 @@ public class VentanaProductos extends javax.swing.JFrame {
             lblCant.setVisible(false);
             txtCantidad.setVisible(false);
             btnAgregarIngrediente.setVisible(false);
+            btnQuitarIngrediente.setVisible(false);
             jScrollPane2.setVisible(false);   // tabla de ingredientes
-            setSize(getWidth(), 360);         // la ventana queda más corta
+            setSize(getWidth(), 385);         // la ventana queda más corta
         }
     }
 
@@ -44,6 +43,7 @@ public class VentanaProductos extends javax.swing.JFrame {
         lblNom = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
         btnBuscar = new javax.swing.JButton();
+        btnRefrescar = new javax.swing.JButton();
         lblPrecio = new javax.swing.JLabel();
         txtPrecioVenta = new javax.swing.JTextField();
         tblProductos = new javax.swing.JTable();
@@ -59,6 +59,7 @@ public class VentanaProductos extends javax.swing.JFrame {
         lblCant = new javax.swing.JLabel();
         txtCantidad = new javax.swing.JTextField();
         btnAgregarIngrediente = new javax.swing.JButton();
+        btnQuitarIngrediente = new javax.swing.JButton();
         tblIngredientes = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
 
@@ -72,6 +73,8 @@ public class VentanaProductos extends javax.swing.JFrame {
 
 
         btnBuscar.setText("Buscar"); // NOI18N
+
+        btnRefrescar.setText("Actualizar lista"); // NOI18N
 
         lblPrecio.setText("Precio venta:"); // NOI18N
 
@@ -101,12 +104,14 @@ public class VentanaProductos extends javax.swing.JFrame {
 
         lblIns.setText("Insumo:"); // NOI18N
 
-        cmbInsumo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Café molido", "Leche", "Azúcar", "Chocolate" }));
+        cmbInsumo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {  }));
 
         lblCant.setText("Cant.:"); // NOI18N
 
 
         btnAgregarIngrediente.setText("Agregar ingrediente"); // NOI18N
+
+        btnQuitarIngrediente.setText("Quitar"); // NOI18N
 
         tblIngredientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -133,12 +138,15 @@ public class VentanaProductos extends javax.swing.JFrame {
                 .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(275, 275, 275)
-                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(385, 385, 385)
+                .addGap(370, 370, 370)
+                .addComponent(btnRefrescar, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
                 .addComponent(lblPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(475, 475, 475)
+                .addGap(110, 110, 110)
                 .addComponent(txtPrecioVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
@@ -174,8 +182,11 @@ public class VentanaProductos extends javax.swing.JFrame {
                 .addGap(285, 285, 285)
                 .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(350, 350, 350)
-                .addComponent(btnAgregarIngrediente, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(345, 345, 345)
+                .addComponent(btnAgregarIngrediente, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(530, 530, 530)
+                .addComponent(btnQuitarIngrediente, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -196,51 +207,57 @@ public class VentanaProductos extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(55, 55, 55)
+                .addGap(53, 53, 53)
+                .addComponent(btnRefrescar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(90, 90, 90)
                 .addComponent(lblPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(55, 55, 55)
+                .addGap(90, 90, 90)
                 .addComponent(txtPrecioVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(95, 95, 95)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(125, 125, 125)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(270, 270, 270)
+                .addGap(290, 290, 290)
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(270, 270, 270)
+                .addGap(290, 290, 290)
                 .addComponent(btnActualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(270, 270, 270)
+                .addGap(290, 290, 290)
                 .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(270, 270, 270)
+                .addGap(290, 290, 290)
                 .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(270, 270, 270)
+                .addGap(290, 290, 290)
                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(325, 325, 325)
+                .addGap(340, 340, 340)
                 .addComponent(lblRecetaHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(355, 355, 355)
+                .addGap(370, 370, 370)
                 .addComponent(lblIns, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(355, 355, 355)
+                .addGap(370, 370, 370)
                 .addComponent(cmbInsumo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(355, 355, 355)
+                .addGap(370, 370, 370)
                 .addComponent(lblCant, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(355, 355, 355)
+                .addGap(370, 370, 370)
                 .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(353, 353, 353)
+                .addGap(368, 368, 368)
                 .addComponent(btnAgregarIngrediente, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(390, 390, 390)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGap(0, 521, Short.MAX_VALUE)
+                .addGap(368, 368, 368)
+                .addComponent(btnQuitarIngrediente, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(405, 405, 405)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(0, 531, Short.MAX_VALUE)
         );
 
         pack();
@@ -251,6 +268,7 @@ public class VentanaProductos extends javax.swing.JFrame {
     public javax.swing.JLabel lblNom;
     public javax.swing.JTextField txtNombre;
     public javax.swing.JButton btnBuscar;
+    public javax.swing.JButton btnRefrescar;
     public javax.swing.JLabel lblPrecio;
     public javax.swing.JTextField txtPrecioVenta;
     public javax.swing.JTable tblProductos;
@@ -266,6 +284,7 @@ public class VentanaProductos extends javax.swing.JFrame {
     public javax.swing.JLabel lblCant;
     public javax.swing.JTextField txtCantidad;
     public javax.swing.JButton btnAgregarIngrediente;
+    public javax.swing.JButton btnQuitarIngrediente;
     public javax.swing.JTable tblIngredientes;
     public javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
