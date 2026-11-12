@@ -1,2 +1,2 @@
 # CATFFEE
-Programa de gestion de inventari y ventas
+Programa de gestion de inventario y ventas
