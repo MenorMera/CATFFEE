@@ -1,0 +1,9 @@
+========== CATFFEE ==========
+Fecha:    2026-11-11 20:25
+Cliente:  ezequiel (C.C. 4879242)
+Atendió:  Empleado (Administrador)
+-----------------------------
+Capuchino       x1      $8500     $8500
+-----------------------------
+TOTAL: $8500
+¡Gracias por su compra!

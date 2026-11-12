@@ -35,7 +35,13 @@ public class Compra {
         this.total = suma;
         return this.total;
     }
-
+    public LocalDateTime getFecha() { return fecha; }
+    public Administrador getAdministrador() { return administrador; }
+    public Proveedor getProveedor() { return proveedor; }
+    public ArrayList<DetalleCompra> getDetalles() { return detalles; }
+    public double getTotal() { return total; }
+    public boolean isConfirmada() { return confirmada; }
+    
     public boolean confirmar() {
         if (confirmada || detalles.isEmpty()) return false;
         for (DetalleCompra d : detalles) {

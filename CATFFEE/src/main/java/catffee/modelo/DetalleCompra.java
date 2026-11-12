@@ -18,4 +18,5 @@ public class DetalleCompra {
 
     public Insumo getInsumo() { return insumo; }
     public double getCantidad() { return cantidad; }
+    public double getPrecioUnitario() { return precioUnitario; }
 }

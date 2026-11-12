@@ -32,6 +32,7 @@ public class VentanaVenta extends javax.swing.JFrame {
         lblCant = new javax.swing.JLabel();
         txtCantidad = new javax.swing.JTextField();
         btnAgregar = new javax.swing.JButton();
+        btnRefrescar = new javax.swing.JButton();
         tblCarrito = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
         btnQuitar = new javax.swing.JButton();
@@ -65,6 +66,8 @@ public class VentanaVenta extends javax.swing.JFrame {
         txtCantidad.setText("1"); // NOI18N
 
         btnAgregar.setText("Agregar"); // NOI18N
+
+        btnRefrescar.setText("Actualizar"); // NOI18N
 
         tblCarrito.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -126,6 +129,9 @@ public class VentanaVenta extends javax.swing.JFrame {
                 .addGap(395, 395, 395)
                 .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
+                .addGap(505, 505, 505)
+                .addComponent(btnRefrescar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
@@ -178,6 +184,9 @@ public class VentanaVenta extends javax.swing.JFrame {
                 .addGap(123, 123, 123)
                 .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
+                .addGap(123, 123, 123)
+                .addComponent(btnRefrescar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
                 .addGap(165, 165, 165)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
@@ -210,6 +219,7 @@ public class VentanaVenta extends javax.swing.JFrame {
     public javax.swing.JLabel lblCant;
     public javax.swing.JTextField txtCantidad;
     public javax.swing.JButton btnAgregar;
+    public javax.swing.JButton btnRefrescar;
     public javax.swing.JTable tblCarrito;
     public javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JButton btnQuitar;
