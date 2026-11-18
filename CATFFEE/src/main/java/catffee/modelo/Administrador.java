@@ -8,6 +8,9 @@ public class Administrador extends Empleado {
         this.accesoTotal = true;
     }
 
+    public boolean isAccesoTotal() { return accesoTotal; }
+    public void setAccesoTotal(boolean accesoTotal) { this.accesoTotal = accesoTotal; }
+
     @Override
     public boolean esAdministrador() {
         return true;

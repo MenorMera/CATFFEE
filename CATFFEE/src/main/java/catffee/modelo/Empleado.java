@@ -24,6 +24,15 @@ public class Empleado {
         return false;
     }
 
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
     public String getNombre() { return nombre; }
     public String getUsuario() { return usuario; }
+
+    public String getContrasenaHash() { return contrasenaHash; }
+    public void setContrasenaHash(String contrasenaHash) { this.contrasenaHash = contrasenaHash; }
+
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
 }

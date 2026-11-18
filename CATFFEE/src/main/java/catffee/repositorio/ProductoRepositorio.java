@@ -6,14 +6,14 @@ import catffee.modelo.Insumo;
 import catffee.modelo.Producto;
 import catffee.util.Formato;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Repositorio de Producto y de su receta (ingredientes).
  *  - cache/productos.txt -> nombre;precioVenta
- *  - cache/recetas.txt   -> producto;insumo;cantidad   (una línea por ingrediente)
+ *  - cache/recetas.txt    -> producto;insumo;cantidad   (una línea por ingrediente)
+ * 
+ * Preparado para soportar persistencia híbrida (Caché local / MySQL).
  */
 public class ProductoRepositorio {
 
@@ -36,18 +36,12 @@ public class ProductoRepositorio {
     // Todos los productos, cada uno con su receta cargada
     public ArrayList<Producto> listar() {
         ArrayList<Producto> lista = new ArrayList<>();
-        // Un único objeto Insumo por insumo: así, si dos productos usan leche, comparten
-        // el mismo objeto y el stock que se descuente se refleja en ambos.
-        Map<String, Insumo> catalogo = new HashMap<>();
-        for (Insumo i : insumos.listar()) {
-            catalogo.put(i.getDescripcion().toLowerCase(), i);
-        }
         for (String linea : GestorCache.leerRegistros(ARCHIVO)) {
             String[] p = linea.split(";");
             if (p.length < 2) continue;
             try {
                 Producto prod = new Producto(p[0], Formato.aNumero(p[1]));
-                cargarReceta(prod, catalogo);
+                cargarReceta(prod);
                 lista.add(prod);
             } catch (NumberFormatException e) {
                 // línea dañada: se ignora
@@ -152,11 +146,11 @@ public class ProductoRepositorio {
 
     // ---------- auxiliares ----------
 
-    private void cargarReceta(Producto prod, Map<String, Insumo> catalogo) {
+    private void cargarReceta(Producto prod) {
         for (String linea : GestorCache.leerRegistros(RECETAS)) {
             String[] p = linea.split(";");
             if (p.length >= 3 && p[0].equalsIgnoreCase(prod.getNombre())) {
-                Insumo insumo = catalogo.get(p[1].trim().toLowerCase());
+                Insumo insumo = insumos.buscarPorDescripcion(p[1]);
                 if (insumo == null) continue;   // el insumo ya no existe
                 try {
                     prod.agregarIngrediente(insumo, Formato.aNumero(p[2]));

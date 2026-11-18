@@ -1,2 +1,3 @@
-caffe;102;10;OK;5000
+caffe;22;10;OK;5000
 cafe instantaneo;5000;2000;OK;50000
+Leche entera;20;10;OK;3600
