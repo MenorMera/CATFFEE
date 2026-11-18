@@ -12,8 +12,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>26</maven.compiler.release>
     </properties>
-
-    <!-- LAS DEPENDENCIAS DEBEN IR SIEMPRE DENTRO DE ESTE BLOQUE -->
     <dependencies>
         <!-- Conector JDBC para MySQL -->
         <dependency>
@@ -21,6 +19,12 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>8.3.0</version>
         </dependency>
+           <!-- Flatlaf -->
+        <dependency>
+    <groupId>com.formdev</groupId>
+    <artifactId>flatlaf</artifactId>
+    <version>3.8</version>
+</dependency>
     </dependencies>
 
 </project>
