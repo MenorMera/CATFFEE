@@ -257,7 +257,7 @@ public class ControladorVentas {
         for (Ingrediente ing : prod.getIngredientes()) {
             String clave = ing.getInsumo().getDescripcion().toLowerCase();
             insumos.put(clave, ing.getInsumo());
-            necesario.merge(clave, ing.getCantidad() * cantidad, Double::sum);
+            necesario.merge(clave, ing.getInsumo().aUnidadCompra(ing.getCantidad()) * cantidad, Double::sum);
         }
     }
 

@@ -3,15 +3,32 @@ package catffee.modelo;
 public class Insumo {
     private int id;
     private String descripcion;
-    private double stockActual;
-    private double stockMinimo;
-    private double precioCosto;
+    private double stockActual;     // en la unidad de compra (kg, L o unidad)
+    private double stockMinimo;     // en la unidad de compra
+    private double precioCosto;     // precio por unidad de compra
+    private String unidadCompra = "unidad";
+    private String unidadReceta = "unidad";
+    private double factor = 1;      // cuántas unidades de receta caben en una de compra (1 kg = 1000 g)
 
     public Insumo(String descripcion, double stockActual, double stockMinimo, double precioCosto) {
         this.descripcion = descripcion;
         this.stockActual = stockActual;
         this.stockMinimo = stockMinimo;
         this.precioCosto = precioCosto;
+    }
+
+    public Insumo(String descripcion, double stockActual, double stockMinimo, double precioCosto,
+                  String unidadCompra, String unidadReceta, double factor) {
+        this(descripcion, stockActual, stockMinimo, precioCosto);
+        this.unidadCompra = unidadCompra;
+        this.unidadReceta = unidadReceta;
+        this.factor = factor;
+    }
+
+    // Convierte una cantidad de la receta (g, ml o unidad) a la unidad de compra (kg, L o unidad)
+    // Ejemplo: 18 g con factor 1000 -> 0.018 kg
+    public double aUnidadCompra(double cantidadReceta) {
+        return factor > 0 ? cantidadReceta / factor : cantidadReceta;
     }
 
     public boolean descontarStock(double cantidad) {
@@ -40,6 +57,12 @@ public class Insumo {
     public double getStockActual() { return stockActual; }
     public double getStockMinimo() { return stockMinimo; }
     public double getPrecioCosto() { return precioCosto; }
+    public String getUnidadCompra() { return unidadCompra; }
+    public void setUnidadCompra(String unidadCompra) { this.unidadCompra = unidadCompra; }
+    public String getUnidadReceta() { return unidadReceta; }
+    public void setUnidadReceta(String unidadReceta) { this.unidadReceta = unidadReceta; }
+    public double getFactor() { return factor; }
+    public void setFactor(double factor) { this.factor = factor; }
 
     // Dos insumos son el mismo si tienen la misma descripción (sin importar mayúsculas)
     @Override

@@ -35,9 +35,10 @@ public class Producto {
         }
     }
 
+    // Cuánto de cada insumo (en su unidad de compra) necesita una venta de 'cantidadVendida' productos
     public boolean hayExistencias(int cantidadVendida) {
         for (Ingrediente ing : ingredientes) {
-            double necesario = ing.getCantidad() * cantidadVendida;
+            double necesario = ing.getInsumo().aUnidadCompra(ing.getCantidad()) * cantidadVendida;
             if (necesario > ing.getInsumo().getStockActual()) {
                 return false;
             }
@@ -48,17 +49,19 @@ public class Producto {
     public boolean descontarInsumos(int cantidadVendida) {
         if (!hayExistencias(cantidadVendida)) return false;
         for (Ingrediente ing : ingredientes) {
-            ing.getInsumo().descontarStock(ing.getCantidad() * cantidadVendida);
+            double descuento = ing.getInsumo().aUnidadCompra(ing.getCantidad()) * cantidadVendida;
+            ing.getInsumo().descontarStock(descuento);
         }
         return true;
     }
 
     public double calcularCosto() {
-    double costo = 0;
-    for (Ingrediente ing : ingredientes) costo += ing.calcularCosto();
-    return costo;
-}
-public double calcularUtilidad() { return precioVenta - calcularCosto(); }
+        double costo = 0;
+        for (Ingrediente ing : ingredientes) costo += ing.calcularCosto();
+        return costo;
+    }
+
+    public double calcularUtilidad() { return precioVenta - calcularCosto(); }
 
     public String getNombre() { return nombre; }
     public double getPrecioVenta() { return precioVenta; }

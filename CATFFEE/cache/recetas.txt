@@ -1,1 +1,3 @@
 Capuchino;caffe;18
+Café Americano;cafe instantaneo;300
+Tarta de Manzana;leche;500

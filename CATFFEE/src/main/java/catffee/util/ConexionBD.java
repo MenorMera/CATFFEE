@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class ConexionBD {
     // Parámetros de conexión local para MySQL
-    private static final String URL = "jdbc:mysql://localhost:3306/catffee_db?useSSL=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/catffee_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
     private static final String USUARIO = "catffee_app";
     private static final String PASSWORD = "Admin1234"; // Cambia esto si tu MySQL local tiene contraseña
 
